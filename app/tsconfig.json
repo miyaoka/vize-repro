@@ -4,8 +4,10 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
     "skipLibCheck": true,
-    "noEmit": true,
-    "types": ["node"]
-  }
+    "noEmit": true
+  },
+  "include": ["src"]
 }

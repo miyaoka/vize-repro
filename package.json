@@ -1,1 +1,15 @@
-{ "name": "repro-root", "private": true }
+{
+  "name": "vize-repro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck:vuetsc:all": "pnpm -r --include-workspace-root --if-present --no-bail --aggregate-output --reporter=append-only typecheck:vuetsc",
+    "typecheck:vize:all": "pnpm -r --include-workspace-root --if-present --no-bail --aggregate-output --reporter=append-only typecheck:vize"
+  },
+  "devDependencies": {
+    "vize": "0.290.0",
+    "vue-tsc": "3.3.6",
+    "typescript": "5.9.3",
+    "@typescript/native-preview": "latest"
+  }
+}
