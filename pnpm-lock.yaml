@@ -23,9 +23,18 @@ importers:
 
   app:
     dependencies:
+      '@repro/lib':
+        specifier: workspace:*
+        version: link:../packages/lib
       vue:
         specifier: 3.5.39
         version: 3.5.39(typescript@5.9.3)
+    devDependencies:
+      '@types/node':
+        specifier: 24.10.1
+        version: 24.10.1
+
+  packages/lib: {}
 
 packages:
 
@@ -193,6 +202,9 @@ packages:
 
   '@tybys/wasm-util@0.10.3':
     resolution: {integrity: sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==}
+
+  '@types/node@24.10.1':
+    resolution: {integrity: sha512-GNWcUTRBgIRJD5zj+Tq0fKOJ5XZajIiBroOF0yvj2bSU1WvNdYS/dn9UxwsujGW4JX06dnHyjV2y9rRaybH0iQ==}
 
   '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260602.1':
     resolution: {integrity: sha512-eSPHtC/iz2jp6H4qVXg2f8C03/dbtZCBVTNg6v8iajGRgD/V23kcOArVk4IQAR0VyqKRCkzQK+TLqKGwrQxP1Q==}
@@ -439,6 +451,9 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  undici-types@7.16.0:
+    resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
+
   vize@0.290.0:
     resolution: {integrity: sha512-R7YsHGTqVV8dBeMBAJgmOivo567vau8bK4jTemHQPSFBeafvMdAB1D/imUrTcuIKg+oga/WG66txy1yOFLWWdw==}
     engines: {node: '>=22'}
@@ -577,6 +592,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@types/node@24.10.1':
+    dependencies:
+      undici-types: 7.16.0
 
   '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260602.1':
     optional: true
@@ -809,6 +828,8 @@ snapshots:
     optional: true
 
   typescript@5.9.3: {}
+
+  undici-types@7.16.0: {}
 
   vize@0.290.0(vue@3.5.39(typescript@5.9.3)):
     dependencies:
