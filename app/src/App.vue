@@ -1,7 +1,108 @@
 <script setup lang="ts">
-const message = "hello vize";
+import { computed, ref } from "vue";
+
+interface BarItem {
+  type: "hunk-bar";
+  lines: number;
+}
+interface LineItem {
+  type: "line";
+  text: string;
+}
+
+// Discriminated union over the `type` tag: "hunk-bar" | "section".
+type ViewItem = BarItem | { type: "section"; lines: LineItem[] };
+
+const rows = ref<(LineItem | BarItem)[]>([]);
+
+// Groups consecutive non-bar rows into a "section", leaving "hunk-bar" items inline.
+const items = computed<ViewItem[]>(() => {
+  const out: ViewItem[] = [];
+  let current: LineItem[] = [];
+  for (const row of rows.value) {
+    if (row.type === "hunk-bar") {
+      if (current.length > 0) {
+        out.push({ type: "section", lines: current });
+        current = [];
+      }
+      out.push(row);
+    } else {
+      current.push(row);
+    }
+  }
+  if (current.length > 0) out.push({ type: "section", lines: current });
+  return out;
+});
 </script>
 
 <template>
-  <div>{{ message }}</div>
+  <div>
+    <template v-for="(item, i) in items" :key="i">
+      <button v-if="item.type === 'hunk-bar'">{{ item.lines }}</button>
+
+      <!--
+        In this v-else branch `item` is narrowed to `{ type: "section" }`. vize
+        re-emits the ancestor guard `item.type === 'hunk-bar'` inside the nested
+        v-for below, so against the narrowed type it compiles the comparison
+        "section" === "hunk-bar", which corsa flags as TS2367 ("no overlap").
+        vue-tsc emits proper nested if/else and never re-compares, so it is clean.
+        Inspect with: vize check src/App.vue --show-virtual-ts
+      -->
+      <div v-else class="_section">
+        <div v-for="(row, j) in item.lines" :key="j" class="_line">
+          {{ row.text }}
+        </div>
+      </div>
+    </template>
+  </div>
 </template>
+
+<!--
+  The <style> block below is padding, not styling. A genuinely-minimal SFC hits a
+  separate vize check under-reporting defect (see the bug/check-drops-diagnostics
+  branch): the TS2367 above is dropped because its generated (canon) byte offset
+  exceeds this source file's length. Padding the source past that offset makes
+  `vize check` actually surface the false positive this branch is about.
+-->
+<style scoped>
+/*
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+  PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING PADDING
+*/
+</style>
