@@ -7,6 +7,10 @@
     "typecheck:vize": "vize check"
   },
   "dependencies": {
+    "@repro/lib": "workspace:*",
     "vue": "3.5.39"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1"
   }
 }
